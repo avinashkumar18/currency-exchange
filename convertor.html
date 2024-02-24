@@ -1,9 +1,105 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Currency Converter Widget</title>
+<style>
+    .currency-widget {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        width: 250px;
+        font-family: Arial, sans-serif;
+    }
+    label {
+        font-weight: bold;
+    }
+    select, input[type="number"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    button {
+        width: 100%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
 </head>
 <body>
-<!-- START CODE Attention! Do not modify this code; --><script>var fm = "INR";var to = "MYR,HKD,SGD";var tz = "timezone";var sz = "1x201";var lg = "en";var st = "primary";var cd = 1;var am = 100</script><script src="//currencyrate.today/exchangerates"></script><div style="text-align:right"><a href="https://currencyrate.today">CurrencyRate</a></div><!-- Attention! Do not modify this code; END CODE -->
 
-Source: https://currencyrate.today/exchangerates-widget
+<div class="currency-widget">
+    <h2>Currency Converter</h2>
+    <label for="baseCurrencyAmount">Amount in Base Currency:</label>
+    <input type="number" id="baseCurrencyAmount" min="0" step="any" required>
+
+    <label for="baseCurrency">Select Base Currency:</label>
+    <select id="baseCurrency">
+        <option value="INR">INR</option>
+        <option value="MYR">MYR</option>
+        <option value="HKD">HKD</option>
+        <option value="SGD">SGD</option>
+        <!-- Add more currencies as needed -->
+    </select>
+
+    <button onclick="convertCurrency()">Convert</button>
+
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>Target Currency</th>
+                <th>Converted Amount</th>
+            </tr>
+        </thead>
+        <tbody id="resultsBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+function convertCurrency() {
+    var baseCurrencyAmount = parseFloat(document.getElementById("baseCurrencyAmount").value);
+    var baseCurrency = document.getElementById("baseCurrency").value;
+    var targetCurrencies = ["INR", "MYR", "SGD", "HKD"]; // Predefined set of target currencies
+    var apiKey = "YOUR_API_KEY"; // Replace with your API key from Open Exchange Rates or any other provider
+
+    var resultsBody = document.getElementById("resultsBody");
+    resultsBody.innerHTML = ""; // Clear previous results
+
+    targetCurrencies.forEach(targetCurrency => {
+        var apiUrl = "https://open.er-api.com/v6/latest/" + baseCurrency + "?apikey=" + apiKey;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                var exchangeRate = data.rates[targetCurrency];
+                var result = baseCurrencyAmount * exchangeRate;
+                var newRow = "<tr><td>" + targetCurrency + "</td><td>" + result.toFixed(2) + "</td></tr>";
+                resultsBody.innerHTML += newRow;
+            })
+            .catch(error => console.log("Error:", error));
+    });
+}
+</script>
+
 </body>
 </html>
